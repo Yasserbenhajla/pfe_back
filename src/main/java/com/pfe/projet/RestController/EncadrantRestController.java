@@ -30,6 +30,7 @@ public class EncadrantRestController {
 
     @Autowired
     EncadrantService encadrantService;
+
     @RequestMapping(method = RequestMethod.POST )
     ResponseEntity<?> AjouterEncadrant (@RequestBody Encadrant encadrant){
         HashMap<String, Object> response = new HashMap<>();
