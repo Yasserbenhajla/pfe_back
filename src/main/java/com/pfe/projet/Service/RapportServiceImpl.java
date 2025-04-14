@@ -1,8 +1,10 @@
 package com.pfe.projet.Service;
 
+import com.pfe.projet.Entity.Encadrant;
 import com.pfe.projet.Entity.Etudiant;
 import com.pfe.projet.Entity.Rapport;
 import com.pfe.projet.Entity.SaveRapport;
+import com.pfe.projet.Repository.EncadrantRepository;
 import com.pfe.projet.Repository.EtudiantRepository;
 import com.pfe.projet.Repository.RapportRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +21,16 @@ public class RapportServiceImpl implements RapportService {
     @Autowired
     private EtudiantRepository etudiantRepository;
 
+    @Autowired
+    EncadrantRepository encadrantRepository;
+
     @Override
     public Rapport ajouterRapport(SaveRapport model) {
         Rapport rapport = SaveRapport.toEntity(model);
         Etudiant etudiant=etudiantRepository.findById(model.getIdEtudiant()).get();
         rapport.setEtudiant(etudiant);
+        Encadrant encadrant=encadrantRepository.findById(model.getIdEncadrant()).get();
+        rapport.setEncadrant(encadrant);
 
         return  rapportRepository.save(rapport);
     }

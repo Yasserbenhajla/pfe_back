@@ -12,6 +12,7 @@ public class SaveJournal {
     private String journal ;
     private Long idEtudiant;
 
+
     public static Journal toEntity(SaveJournal model)
     {
         if (model==null)

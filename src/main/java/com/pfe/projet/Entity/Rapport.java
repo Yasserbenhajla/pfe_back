@@ -15,6 +15,8 @@ public class Rapport {
         private String rapport ;
         @ManyToOne
         private Etudiant etudiant ;
+        @ManyToOne
+        private Encadrant encadrant ;
     }
 
 

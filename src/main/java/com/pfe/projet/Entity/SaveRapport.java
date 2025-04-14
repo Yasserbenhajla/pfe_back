@@ -11,6 +11,7 @@ public class SaveRapport {
     @Column(columnDefinition = "LongText")
     private String rapport ;
     private Long idEtudiant;
+    private Long idEncadrant;
 
     public static Rapport  toEntity(SaveRapport model)
     {
