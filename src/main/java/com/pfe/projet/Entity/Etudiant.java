@@ -18,4 +18,5 @@ public class Etudiant {
     private String password;
     private String niveau;
     private String tel;
+    private boolean etat ;
 }

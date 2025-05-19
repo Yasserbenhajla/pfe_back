@@ -10,6 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/type_stage")
+@CrossOrigin("*")
 public class Type_StageRestController {
 
     @Autowired

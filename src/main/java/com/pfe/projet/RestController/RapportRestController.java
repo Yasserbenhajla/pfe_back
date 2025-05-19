@@ -25,4 +25,8 @@ public class RapportRestController {
     public List<Rapport> getRapports() {
         return rapportService.getRapport();
     }
+    @RequestMapping("get-all-by-id-Encadrant/{id}")
+    public List<Rapport> listeRapportByEncadrant(@PathVariable Long id){
+        return rapportService.listeRapportByEncadrant(id);
+    }
 }

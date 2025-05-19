@@ -9,6 +9,8 @@ import java.util.List;
 public interface RapportService {
     Rapport ajouterRapport(SaveRapport model);
     List<Rapport> getRapport();
+
+    List<Rapport> listeRapportByEncadrant(Long id);
 }
 
 

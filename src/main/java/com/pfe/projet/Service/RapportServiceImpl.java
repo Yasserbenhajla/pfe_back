@@ -40,5 +40,10 @@ public class RapportServiceImpl implements RapportService {
         return rapportRepository.findAll();
     }
 
+    @Override
+    public List<Rapport> listeRapportByEncadrant(Long id) {
+        return rapportRepository.findByEncadrantId(id);
+    }
+
 
 }

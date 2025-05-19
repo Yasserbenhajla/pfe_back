@@ -13,4 +13,5 @@ public interface EtudiantRepository extends JpaRepository<Etudiant, Long> {
     Etudiant findEtudiantByEmail(String email);
 
 
+    Etudiant findByEmail(String email);
 }

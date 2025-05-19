@@ -3,8 +3,13 @@ package com.pfe.projet.RestController;
 
 import com.pfe.projet.Entity.Encadrant;
 
+import com.pfe.projet.Entity.Qualite;
+import com.pfe.projet.Entity.SaveEncadrant;
+import com.pfe.projet.Entity.Specialite;
 import com.pfe.projet.Repository.EncadrantRepository;
 
+import com.pfe.projet.Repository.QualiteRepository;
+import com.pfe.projet.Repository.SpecialiteRepository;
 import com.pfe.projet.Service.EncadrantService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -31,17 +36,10 @@ public class EncadrantRestController {
     @Autowired
     EncadrantService encadrantService;
 
-    @RequestMapping(method = RequestMethod.POST )
-    ResponseEntity<?> AjouterEncadrant (@RequestBody Encadrant encadrant){
-        HashMap<String, Object> response = new HashMap<>();
-        if(encadrantRepository.existsByEmail(encadrant.getEmail())){
-            response.put("message", "email exist deja !");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-        }else{
-            encadrant.setPassword(this.bCryptPasswordEncoder.encode(encadrant.getPassword()));
-            Encadrant savedUser = encadrantRepository.save(encadrant);
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);}
 
+    @RequestMapping(method = RequestMethod.POST )
+    ResponseEntity<?> AjouterEncadrant (@RequestBody SaveEncadrant model){
+     return encadrantService.ajouterEncadrant(model);
     }
     @RequestMapping(value = "/{id}" ,method = RequestMethod.PUT)
     public Encadrant modifierEncadrant(@PathVariable("id")Long id, @RequestBody Encadrant encadrant){
@@ -100,5 +98,7 @@ public class EncadrantRestController {
         Optional<Encadrant> encadrant = encadrantService.getEncadrantById(id);
         return encadrant;
     }
+
+
 
 }
