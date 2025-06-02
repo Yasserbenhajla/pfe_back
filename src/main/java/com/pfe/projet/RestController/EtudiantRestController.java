@@ -8,7 +8,10 @@ import com.pfe.projet.Entity.Etudiant;
 
 import com.pfe.projet.Repository.EtudiantRepository;
 
+import com.pfe.projet.Service.EmailEnServiceImpl;
+import com.pfe.projet.Service.EmailService;
 import com.pfe.projet.Service.EtudiantService;
+import com.pfe.projet.Service.RestMdpService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,50 +22,46 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping(value = "/Etudiant")
 @CrossOrigin("*")
 public class EtudiantRestController {
     private BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-
+@Autowired
+    RestMdpService restMdpService ;
     @Autowired
     EtudiantRepository etudiantRepository;
 
     @Autowired
     EtudiantService etudiantService;
-    @RequestMapping(method = RequestMethod.POST )
-    ResponseEntity<?> AjouterEtudiant (@RequestBody Etudiant etudiant){
+    @Autowired
+    EmailEnServiceImpl emailEnService;
+
+    @RequestMapping(method = RequestMethod.POST)
+    ResponseEntity<?> AjouterEtudiant(@RequestBody Etudiant etudiant) {
         HashMap<String, Object> response = new HashMap<>();
-        if(etudiantRepository.existsByEmail(etudiant.getEmail())){
+        if (etudiantRepository.existsByEmail(etudiant.getEmail())) {
             response.put("message", "email exist deja !");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-        }else{
+        } else {
             etudiant.setPassword(this.bCryptPasswordEncoder.encode(etudiant.getPassword()));
             Etudiant savedUser = etudiantRepository.save(etudiant);
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);}
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
+        }
 
     }
-    @RequestMapping(value = "/{id}" ,method = RequestMethod.PUT)
-    public Etudiant ModifierEtudiant(@PathVariable("id")Long id, @RequestBody Etudiant etudiant){
-        etudiant.setPassword(this.bCryptPasswordEncoder.encode(etudiant.getPassword()));
-        Etudiant savedUser = etudiantRepository.save(etudiant);
 
-        Etudiant newEtudiant = etudiantService.ModifierEtudiant(etudiant);
-        return newEtudiant;
-    }
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE )
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 
-    public void supprimerEtudiant(@PathVariable("id") Long id){
+    public void supprimerEtudiant(@PathVariable("id") Long id) {
         etudiantService.supprimerEtudiant(id);
 
     }
-    @RequestMapping(method = RequestMethod.GET )
-    public List<Etudiant> getAllEtudiant(){
+
+    @RequestMapping(method = RequestMethod.GET)
+    public List<Etudiant> getAllEtudiant() {
         return etudiantService.getAllEtudiant();
 
     }
@@ -70,22 +69,21 @@ public class EtudiantRestController {
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> loginEtudiant(@RequestBody Etudiant etudiant) {
-        System.out.println("in login-etudiant"+etudiant);
+        System.out.println("in login-etudiant" + etudiant);
         HashMap<String, Object> response = new HashMap<>();
 
         Etudiant userFromDB = etudiantRepository.findEtudiantByEmail(etudiant.getEmail());
-        System.out.println("userFromDB+etudiant"+userFromDB);
+        System.out.println("userFromDB+etudiant" + userFromDB);
         if (userFromDB == null) {
             response.put("message", "etudiant not found !");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         } else {
             boolean compare = this.bCryptPasswordEncoder.matches(etudiant.getPassword(), userFromDB.getPassword());
-            System.out.println("compare"+compare);
+            System.out.println("compare" + compare);
             if (!compare) {
                 response.put("message", "etudiant not found !");
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-            }else
-            {
+            } else {
                 String token = Jwts.builder()
                         .claim("data", userFromDB)
                         .signWith(SignatureAlgorithm.HS256, "SECRET")
@@ -99,8 +97,8 @@ public class EtudiantRestController {
         }
     }
 
-    @RequestMapping(value = "/{id}" , method = RequestMethod.GET)
-    public Optional<Etudiant> getEtudiantById(@PathVariable("id") Long id){
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public Optional<Etudiant> getEtudiantById(@PathVariable("id") Long id) {
 
         Optional<Etudiant> etudiant = etudiantService.getEtudiantById(id);
         return etudiant;
@@ -162,15 +160,66 @@ public class EtudiantRestController {
                 .signWith(SignatureAlgorithm.HS256, "SECRET_KEY")
                 .compact();
     }
-    @PostMapping("/forgot-password")
-    public ResponseEntity<?> forgotPassword(@RequestParam String email) {
-        return etudiantService.forgotPassword(email);
+
+    @RequestMapping(value = "/forgotmdp", method = RequestMethod.POST)
+    public ResponseEntity<?> forgotMdp(@RequestBody Etudiant etudiant) {
+        System.out.println("Demande de réinitialisation de mot de passe reçue pour l'e-mail: " + etudiant);
+        Etudiant userFromDB = etudiantRepository.findByEmail(etudiant.getEmail());
+        if (userFromDB == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Utilisateur non trouvé");
+        } else {
+            String nvmdp = restMdpService.nvMdp();
+            userFromDB.setPassword(bCryptPasswordEncoder.encode(nvmdp));
+            etudiantRepository.save(userFromDB);
+
+            emailEnService.SendSimpleMessage(etudiant.getEmail(), "Votre nouveau mot de passe", "Bonjour,\n" +
+                    "Votre mot de passe été re-initlaisé, le nouveau mot de passe est : " + nvmdp);
+            return ResponseEntity.status(HttpStatus.OK).body("Instructions de réinitialisation du mot de passe envoyées à votre adresse e-mail");
+        }
     }
 
-    @PostMapping("/reset-password")
-    public ResponseEntity<?> resetPassword(@RequestParam String token,
-                                           @RequestParam String newPassword) {
-        return etudiantService.resetPassword(token, newPassword);
-    }
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    public ResponseEntity<Map<String, Object>> modifieretudiant(@PathVariable("id") Long id, @RequestBody Etudiant etudiant) {
+        Etudiant newEtudiant= null;
+        HashMap<String, Object> response = new HashMap<>();
+        if(etudiantRepository.findById(id).isPresent()) {
+            Etudiant etudiant1 = etudiantRepository.findById(id).get();
+            var etudiantid = etudiant.getId();
+            var nom = etudiant.getNom();
+            var prenom = etudiant.getPrenom();
+            var email = etudiant.getEmail();
+            var password = etudiant.getPassword();
+            var niveau = etudiant.getNiveau();
+            var tel = etudiant.getTel();
 
+
+            etudiant1.setId(etudiantid);
+            etudiant1.setNom(nom);
+            etudiant1.setPrenom(prenom);
+            etudiant1.setEmail(email);
+            etudiant1.setPassword(password);
+            etudiant1.setNiveau(niveau);
+            etudiant1.setTel(tel);
+
+
+            etudiant.setPassword(this.bCryptPasswordEncoder.encode(etudiant.getPassword()));
+
+            newEtudiant = etudiantRepository.save(etudiant1);
+
+            String token = Jwts.builder()
+                    .claim("data", newEtudiant)
+                    .signWith(SignatureAlgorithm.HS256, "SECRET")
+                    .compact();
+
+            response.put("client", newEtudiant);
+            response.put("token", token);
+            System.out.println("ddddddddddddd");
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }else{
+            response.put("message", "Etudiant not found !");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+
+    }
 }

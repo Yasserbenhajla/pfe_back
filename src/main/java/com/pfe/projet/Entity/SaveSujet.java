@@ -10,11 +10,12 @@ public class SaveSujet {
     @Lob
     @Column(columnDefinition = "LongText")
     private String description;
-    private boolean status;
+    private int status=0;
     private Long idEtudiant;
+    private Long idStage;
 
 
-    public static Sujet toEntity(SaveSujet model, Etudiant etudiant) {
+    public static Sujet toEntity(SaveSujet model, Etudiant etudiant, Stage stage) {
         if (model == null) {
             return null;
         }
@@ -22,8 +23,9 @@ public class SaveSujet {
         Sujet sujet = new Sujet();
         sujet.setId(model.getId());
         sujet.setDescription(model.getDescription());
-        sujet.setStatus(model.isStatus());
+
         sujet.setEtudiant(etudiant);
+        sujet.setStage(stage);
 
 
         return sujet;

@@ -21,12 +21,9 @@ public class ContactRestController {
     public Contact  AjouterContcat (@RequestBody Contact contact){
       return contactService.ajouterContact(contact);
     }
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE )
 
-    public void suppContact(@PathVariable("id") Long id){
-        contactService.supprimerContact(id);
 
-    }
+
     @RequestMapping(method = RequestMethod.GET )
     public List<Contact> getAllContact(){
         return contactService.getAllContact();

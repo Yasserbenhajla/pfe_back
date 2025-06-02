@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SpecialiteServiceImpl implements SpecialiteService{
@@ -22,4 +23,11 @@ public class SpecialiteServiceImpl implements SpecialiteService{
     public List<Specialite> getSpecialite() {
         return specialiteRepository.findAll();
     }
+
+    @Override
+    public Specialite modifierSpecialite(Specialite specialite) {
+        return specialiteRepository.save(specialite);
+    }
+
+
 }

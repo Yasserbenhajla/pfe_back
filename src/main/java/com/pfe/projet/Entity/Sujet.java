@@ -12,9 +12,12 @@ public class Sujet {
     @Lob
     @Column(columnDefinition = "LONGTEXT")
     private String description ;
-    private boolean status ;
+    private int status=0 ;
     @ManyToOne
     private Etudiant etudiant ;
+    @ManyToOne
+    private Stage stage ;
+
 
 
 }

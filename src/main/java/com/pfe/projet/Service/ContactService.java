@@ -7,6 +7,5 @@ import java.util.List;
 
 public interface ContactService {
     Contact ajouterContact(Contact contact);
-    void supprimerContact (Long id);
     List<Contact> getAllContact();
 }

@@ -16,10 +16,6 @@ public class ContactServiceImpl implements ContactService {
         return contactRepository.save(contact);
     }
 
-    @Override
-    public void supprimerContact(Long id) {
-        contactRepository.deleteById(id);
-    }
 
     @Override
     public List<Contact> getAllContact() {
