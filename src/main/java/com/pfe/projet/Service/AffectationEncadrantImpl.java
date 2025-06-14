@@ -55,7 +55,10 @@ public class AffectationEncadrantImpl implements AffectationEncadrantService {
         return affectationRepository.save(affectationExistante);
     }
 
-
+    @Override
+    public List<AffectationEncadrant> listeAffectationByEncadrant(Long id) {
+        return affectationRepository.findByEncadrantId(id);
+    }
 
 
 }

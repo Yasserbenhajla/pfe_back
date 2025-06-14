@@ -12,4 +12,6 @@ public interface StageService {
     void supprimerStage(Long id);
     List<Stage> getAllStages();
     Optional<Stage> getStageById(Long id);
+
+    List<Stage> listeStageByEtudiant(Long id);
 }

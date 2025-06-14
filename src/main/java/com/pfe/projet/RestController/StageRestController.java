@@ -1,5 +1,6 @@
 package com.pfe.projet.RestController;
 
+import com.pfe.projet.Entity.RapportEncadrant;
 import com.pfe.projet.Entity.SaveStage;
 import com.pfe.projet.Entity.Stage;
 import com.pfe.projet.Service.StageService;
@@ -50,4 +51,9 @@ public class StageRestController {
         Optional<Stage> stage = stageService.getStageById(id);
         return stage.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
+    @RequestMapping("get-all-by-id-Etudiant/{id}")
+    public List<Stage> listeRapportByEtudiant(@PathVariable Long id){
+        return stageService.listeStageByEtudiant(id);
+    }
+
 }

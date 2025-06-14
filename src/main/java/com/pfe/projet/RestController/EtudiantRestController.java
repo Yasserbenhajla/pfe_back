@@ -89,6 +89,7 @@ public class EtudiantRestController {
                         .signWith(SignatureAlgorithm.HS256, "SECRET")
                         .compact();
                 response.put("token", token);
+                response.put("type", userFromDB.getType_stage());
 
 
                 return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -213,6 +214,7 @@ public class EtudiantRestController {
 
             response.put("client", newEtudiant);
             response.put("token", token);
+
             System.out.println("ddddddddddddd");
 
             return ResponseEntity.status(HttpStatus.OK).body(response);

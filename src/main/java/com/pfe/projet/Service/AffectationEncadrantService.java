@@ -11,4 +11,5 @@ public interface AffectationEncadrantService {
     List<AffectationEncadrant> getAffectationEncadrant();
     AffectationEncadrant modifierAffectationEncadrant(Long id, SaveAffectationEncadrant model);
 
+    List<AffectationEncadrant> listeAffectationByEncadrant(Long id);
 }

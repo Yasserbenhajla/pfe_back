@@ -40,4 +40,8 @@ public class AffectationRestController {
             @RequestBody SaveAffectationEncadrant model) {
         return affectationService.modifierAffectationEncadrant(id, model);
     }
+    @RequestMapping("get-all-by-id-Enc/{id}")
+    public List<AffectationEncadrant> listeAffectationByEncadrant(@PathVariable Long id){
+        return affectationService.listeAffectationByEncadrant(id);
+    }
 }

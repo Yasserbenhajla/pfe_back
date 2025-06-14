@@ -19,4 +19,5 @@ public class Etudiant {
     private String niveau;
     private String tel;
     private boolean etat ;
+    private String type_stage ;
 }
